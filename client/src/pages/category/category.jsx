@@ -101,14 +101,16 @@ class Category extends Component {
     const categoryName = this.props.form.getFieldValue('categoryName')
     const parentId = this.props.form.getFieldValue('parentId')
     const res = await reqCategoryAdd({categoryName, parentId})
-    Modal.success({
-      content: '新增成功'
-    })
-    this.setState({
-      showStatus: 0
-    })
-    this.props.form.resetFields()
-    this.getCategories()
+    if(res.status === 0) {
+      Modal.success({
+        content: '新增成功'
+      })
+      this.setState({
+        showStatus: 0
+      })
+      this.props.form.resetFields()
+      this.getCategories()
+    }
   };
 
   /* 修改分类 */
@@ -116,14 +118,16 @@ class Category extends Component {
     const categoryId = this.category._id;
     const categoryName = this.props.form.getFieldValue('categoryName')
     const res = await reqCategoryUpdate({categoryId, categoryName})
-    Modal.success({
-      content: '修改成功',
-    });
-    this.setState({
-      showStatus: 0
-    })
-    this.props.form.resetFields()
-    this.getCategories()
+    if(res.status === 0) {
+      Modal.success({
+        content: '修改成功',
+      });
+      this.setState({
+        showStatus: 0
+      })
+      this.props.form.resetFields()
+      this.getCategories()
+    }
   };
 
   componentWillMount() {
