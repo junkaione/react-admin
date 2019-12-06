@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import {Card, Select, Input, Button, Icon, Table} from 'antd';
-import {reqProducts, reqSearchProducts}  from '../../api';
+import {Card, Select, Input, Button, Icon, Table, message} from 'antd';
+import {reqProducts, reqSearchProducts, reqUpdateStatus}  from '../../api';
 import {PAGE_SIZE} from '../../config/CommonConfig'
 const Option = Select.Option
 
@@ -33,13 +33,17 @@ class ProductHome extends Component {
       },
       {
         title: '状态',
-        dataIndex: 'status',
         width: 100,
-        render: (status) => {
+        render: (product) => {
           return (
             <span>
-              <Button type="primary">下架</Button>
-              <span>在售</span>
+              <Button 
+                type="primary"
+                onClick={() => this.updateStatus(product._id, product.status === 1 ? 2 : 1)}
+              >
+                {product.status === 1 ? '下架' : '上架'}
+              </Button>
+              <span>{product.status === 1 ? '在售' : '已下架'}</span>
             </span>
           )
         }
@@ -50,7 +54,7 @@ class ProductHome extends Component {
         render: (product) => {
           return (
             <span>
-              <button className="link-btn">详情</button>
+              <button className="link-btn" onClick={() => this.props.history.push('/product/detail', {product})}>详情</button>
               <button className="link-btn">修改</button>
             </span>
           )
@@ -58,8 +62,19 @@ class ProductHome extends Component {
       }
     ]
   }
+  updateStatus = async (_id, status) => {
+    const res = await reqUpdateStatus({
+      productId: _id,
+      status
+    })
+    if (res.status === 0) {
+      message.success('更新商品成功')
+      this.getProducts(this.pageNum)
+    }
+  }
   /* 获取指定页码的列表数据显示 */
   getProducts = async (pageNum) => {
+    this.pageNum = pageNum
     this.setState({
       loading: true
     })
