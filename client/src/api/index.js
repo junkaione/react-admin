@@ -26,3 +26,9 @@ export const reqSearchProducts = data => ajax('/manage/product/search', data)
 
 /* 更新商品状态(上架/下架) */
 export const reqUpdateStatus = data => ajax('/manage/product/updateStatus', data, "POST")
+
+/* 添加商品 */
+export const reqAddProduct = data => ajax('/manage/product/add', data, "POST")
+
+/* 更新商品 */
+export const reqUpdateProduct = data => ajax('/manage/product/update', data, "POST")

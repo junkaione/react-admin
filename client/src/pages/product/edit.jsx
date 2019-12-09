@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Card, Form, Input, Cascader, Upload, Button, Icon } from 'antd';
-import {reqCategories} from '../../api'
+import { Card, Form, Input, Cascader, Upload, Button, Icon, message } from 'antd';
+import {reqCategories, reqAddProduct, reqUpdateProduct} from '../../api'
 import PicturesWall from './pictures-wall'
 import RichTextEditor from './rich-text-editor'
 const { Item } = Form
@@ -15,12 +15,33 @@ class ProductEdit extends Component {
     this.pw = React.createRef()
     this.editor = React.createRef()
   }
-  addProduct = () => {
-    this.props.form.validateFields((error, values) => {
+  submit = () => {
+    this.props.form.validateFields(async (error, values) => {
       if (!error) {
+        const {name, desc, price, categoryIds} = values
+        let pCategoryId, categoryId
         const imgs = this.pw.current.getImgs()
         const detail = this.editor.current.getDetail()
-        console.log(detail,111);
+        if(categoryIds.length === 1) {
+          pCategoryId = '0'
+          categoryId = categoryIds[0]
+        } else {
+          pCategoryId = categoryIds[0]
+          categoryId = categoryIds[1]
+        }
+        const product = {name, desc, price, pCategoryId, categoryId, imgs, detail}
+        let res
+        if(this.isUpdate) {
+          product._id = this.product._id
+          res = await reqUpdateProduct(product)
+        } else {
+          res = await reqAddProduct(product)
+        }
+        if(res.status === 0) {
+          message.success(`${this.isUpdate ? '更新成功':'新增成功'}`)
+          this.props.history.goBack()
+        }
+
       } else {
         console.log(values,111);
       }
@@ -177,13 +198,13 @@ class ProductEdit extends Component {
             }
           </Item>
           <Item label="商品图片">
-            <PicturesWall ref={this.pw} imgs={this.props.imgs} />
+            <PicturesWall ref={this.pw} imgs={this.product.imgs} />
           </Item>
           <Item label="商品详情" labelCol={{span: 2}} wrapperCol={{span: 20}}>
             <RichTextEditor ref={this.editor} detail={this.product.detail} />
           </Item>
           <Item>
-            <Button type="primary" onClick={this.addProduct}>提交</Button>
+            <Button type="primary" onClick={this.submit}>提交</Button>
           </Item>
         </Form>
       </Card>

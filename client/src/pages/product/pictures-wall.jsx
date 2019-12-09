@@ -36,7 +36,7 @@ class PicturesWall extends React.Component {
   }
 
   getImgs = () => {
-    return this.state.fileList.map(item => item.response.data.url)
+    return this.state.fileList.map(item => item.url)
   }
 
   handleCancel = () => this.setState({ previewVisible: false });
@@ -57,6 +57,7 @@ class PicturesWall extends React.Component {
       const res = file.response
       if(res.status === 0) {
         message.success('图片上传成功')
+        fileList[fileList.length-1].url = res.data.url
       } else {
         message.error('图片上传失败')
       }
