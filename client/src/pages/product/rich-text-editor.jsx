@@ -40,6 +40,27 @@ class RichTextEditor extends Component {
     return draftToHtml(convertToRaw(this.state.editorState.getCurrentContent()))
   }
 
+  uploadImageCallBack = (file) => {
+    return new Promise(
+      (resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://localhost:8081/manage/img/upload');
+        const data = new FormData();
+        data.append('image', file);
+        xhr.send(data);
+        xhr.addEventListener('load', () => {
+          const response = JSON.parse(xhr.responseText);
+          const url = response.data.url
+          resolve({data: {link: url}});
+        });
+        xhr.addEventListener('error', () => {
+          const error = JSON.parse(xhr.responseText);
+          reject(error);
+        });
+      }
+    );
+  }
+
   render() {
     const { editorState } = this.state;
     return (
@@ -47,6 +68,9 @@ class RichTextEditor extends Component {
         editorState={editorState}
         editorStyle={{border: '1px solid #000', minHeight: 200, padding: '0 10px'}}
         onEditorStateChange={this.onEditorStateChange}
+        toolbar={{
+          image: { uploadCallback: this.uploadImageCallBack, alt: { present: true, mandatory: true } },
+        }}
       />
     );
   }
