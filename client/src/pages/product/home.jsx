@@ -55,7 +55,7 @@ class ProductHome extends Component {
           return (
             <span>
               <button className="link-btn" onClick={() => this.props.history.push('/product/detail', {product})}>详情</button>
-              <button className="link-btn">修改</button>
+              <button className="link-btn" onClick={() => this.props.history.push('/product/edit', {product})}>修改</button>
             </span>
           )
         }
