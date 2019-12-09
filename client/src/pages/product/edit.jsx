@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Card, Form, Input, Cascader, Upload, Button, Icon } from 'antd';
 import {reqCategories} from '../../api'
 import PicturesWall from './pictures-wall'
+import RichTextEditor from './rich-text-editor'
 const { Item } = Form
 const { TextArea } = Input
 
@@ -12,12 +13,14 @@ class ProductEdit extends Component {
       options: []
     };
     this.pw = React.createRef()
+    this.editor = React.createRef()
   }
   addProduct = () => {
     this.props.form.validateFields((error, values) => {
       if (!error) {
         const imgs = this.pw.current.getImgs()
-        console.log(imgs, 111);
+        const detail = this.editor.current.getDetail()
+        console.log(detail,111);
       } else {
         console.log(values,111);
       }
@@ -176,8 +179,8 @@ class ProductEdit extends Component {
           <Item label="商品图片">
             <PicturesWall ref={this.pw} imgs={this.props.imgs} />
           </Item>
-          <Item label="商品详情">
-            <div>商品详情</div>
+          <Item label="商品详情" labelCol={{span: 2}} wrapperCol={{span: 20}}>
+            <RichTextEditor ref={this.editor} detail={this.product.detail} />
           </Item>
           <Item>
             <Button type="primary" onClick={this.addProduct}>提交</Button>
