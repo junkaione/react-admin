@@ -32,3 +32,9 @@ export const reqAddProduct = data => ajax('/manage/product/add', data, "POST")
 
 /* 更新商品 */
 export const reqUpdateProduct = data => ajax('/manage/product/update', data, "POST")
+
+/* 获取所有角色列表 */
+export const reqRoles = data => ajax('/manage/role/list', data)
+
+/* 添加角色 */
+export const reqAddRole = data => ajax('/manage/role/add', data, "POST")
