@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, Form, Input, Cascader, Upload, Button, Icon, message } from 'antd';
+import { Card, Form, Input, Cascader, Button, Icon, message } from 'antd';
 import {reqCategories, reqAddProduct, reqUpdateProduct} from '../../api'
 import PicturesWall from './pictures-wall'
 import RichTextEditor from './rich-text-editor'
@@ -73,7 +73,7 @@ class ProductEdit extends Component {
       isLeaf: false
     }))
     const {isUpdate, product} = this
-    const {pCategoryId, categoryId} = product
+    const {pCategoryId} = product
     if(isUpdate && pCategoryId !== '0') {
       const subCategories = await this.getCategories(pCategoryId)
       const childOptions = subCategories.map(item => ({
