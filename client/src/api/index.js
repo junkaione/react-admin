@@ -38,3 +38,6 @@ export const reqRoles = data => ajax('/manage/role/list', data)
 
 /* 添加角色 */
 export const reqAddRole = data => ajax('/manage/role/add', data, "POST")
+
+/* 更新角色 */
+export const reqUpdateRole = data => ajax('/manage/role/update', data, "POST")

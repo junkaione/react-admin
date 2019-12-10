@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Card, Button, Table, Modal, Form, Input, message} from 'antd'
+import {Card, Button, Table, Modal, Form, Input, message, Tree} from 'antd'
 import {PAGE_SIZE} from '../../config/CommonConfig'
 import {reqRoles, reqAddRole} from '../../api'
 const { Item } = Form
@@ -8,7 +8,8 @@ class Role extends Component {
   state = {
     roles: [], // 所有角色列表
     role: {}, // 选中角色
-    isShowAdd: false, // 
+    isShowAdd: false,
+    isShowAuth: false,
   }
   initColumns = () => {
     this.columns = [
@@ -75,6 +76,10 @@ class Role extends Component {
       }
     })
   }
+  /* 更新角色 */
+  updateRole = () => {
+
+  }
   componentWillMount() {
     this.initColumns()
   }
@@ -82,7 +87,7 @@ class Role extends Component {
     this.getRole()
   }
   render() {
-    const {roles, role, isShowAdd} = this.state
+    const {roles, role, isShowAdd, isShowAuth} = this.state
     const {getFieldDecorator} = this.props.form
     /* 指定Item布局的配置对象 */
     const formItemLayout = {
@@ -96,7 +101,7 @@ class Role extends Component {
     const title = (
       <span>
         <Button type="primary" onClick={() => this.setState({isShowAdd: true})}>创建角色</Button>&nbsp;&nbsp;
-        <Button type="primary" disabled={!role._id}>设置角色权限</Button>
+        <Button type="primary" disabled={!role._id} onClick={() => this.setState({isShowAuth: true})}>设置角色权限</Button>
       </span>
     )
     return (
@@ -127,6 +132,18 @@ class Role extends Component {
                   <Input placeholder="请输入角色名称" />
                 )
               }
+            </Item>
+          </Form>
+        </Modal>
+        <Modal
+          title="设置角色权限"
+          visible={isShowAuth}
+          onOk={this.updateRole}
+          onCancel={() => this.setState({isShowAuth: false})}
+        >
+          <Form {...formItemLayout}>
+            <Item label="角色名称">
+              <Input disabled value={role.name} />
             </Item>
           </Form>
         </Modal>
