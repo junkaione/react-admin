@@ -1,15 +1,21 @@
 import React, {Component} from 'react';
 import {Card, Button, Table, Modal, Form, Input, message, Tree} from 'antd'
 import {PAGE_SIZE} from '../../config/CommonConfig'
-import {reqRoles, reqAddRole} from '../../api'
+import {reqRoles, reqAddRole, reqUpdateRole} from '../../api'
+import {menuList} from '../../config/menuConfig'
 const { Item } = Form
+const { TreeNode } = Tree
 
 class Role extends Component {
-  state = {
-    roles: [], // 所有角色列表
-    role: {}, // 选中角色
-    isShowAdd: false,
-    isShowAuth: false,
+  constructor(props) {
+    super(props);
+    this.state = {
+      roles: [], // 所有角色列表
+      role: {}, // 选中角色
+      isShowAdd: false,
+      isShowAuth: false,
+      checkedKeys: []
+    }
   }
   initColumns = () => {
     this.columns = [
@@ -52,7 +58,8 @@ class Role extends Component {
     return {
       onClick: event => {
         this.setState({
-          role
+          role,
+          checkedKeys: role.menus
         })
       }
     }
@@ -77,17 +84,40 @@ class Role extends Component {
     })
   }
   /* 更新角色 */
-  updateRole = () => {
-
+  updateRole = async () => {
+    const {role, checkedKeys} = this.state
+    const newRole = {...role}
+    newRole.menus = checkedKeys
+    const res = await reqUpdateRole(newRole)
+    if(res.status === 0) {
+      message.success('更新权限成功')
+      this.setState({
+        isShowAuth: false
+      })
+      this.getRole()
+    }
+  }
+  getTreeNodes = (menuList) => {
+    return menuList.map((item) => (
+      <TreeNode title={item.title} key={item.key}>
+        {item.children ? this.getTreeNodes(item.children) : null}
+      </TreeNode>
+    ))
+  }
+  onCheck = (checkedKeys) => {
+    this.setState({
+      checkedKeys
+    })
   }
   componentWillMount() {
     this.initColumns()
+    this.treeNodes = this.getTreeNodes(menuList)
   }
   componentDidMount() {
     this.getRole()
   }
   render() {
-    const {roles, role, isShowAdd, isShowAuth} = this.state
+    const {roles, role, isShowAdd, isShowAuth, checkedKeys} = this.state
     const {getFieldDecorator} = this.props.form
     /* 指定Item布局的配置对象 */
     const formItemLayout = {
@@ -139,12 +169,22 @@ class Role extends Component {
           title="设置角色权限"
           visible={isShowAuth}
           onOk={this.updateRole}
-          onCancel={() => this.setState({isShowAuth: false})}
+          onCancel={() => this.setState({isShowAuth: false, checkedKeys: role.menus})}
         >
           <Form {...formItemLayout}>
             <Item label="角色名称">
               <Input disabled value={role.name} />
             </Item>
+            <Tree
+              checkable
+              defaultExpandAll={true}
+              checkedKeys={checkedKeys}
+              onCheck={this.onCheck}
+            >
+              <TreeNode title="平台权限" key="all">
+                {this.treeNodes}
+              </TreeNode>
+            </Tree>
           </Form>
         </Modal>
       </Card>
