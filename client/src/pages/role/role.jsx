@@ -3,6 +3,7 @@ import {Card, Button, Table, Modal, Form, Input, message, Tree} from 'antd'
 import {PAGE_SIZE} from '../../config/CommonConfig'
 import {reqRoles, reqAddRole, reqUpdateRole} from '../../api'
 import {menuList} from '../../config/menuConfig'
+import { formatDate } from '../../utils/commonJS'
 const { Item } = Form
 const { TreeNode } = Tree
 
@@ -25,11 +26,13 @@ class Role extends Component {
       },
       {
         title: '创建时间',
-        dataIndex: 'create_time'
+        dataIndex: 'create_time',
+        render: formatDate
       },
       {
         title: '授权时间',
-        dataIndex: 'auth_time'
+        dataIndex: 'auth_time',
+        render: formatDate
       },
       {
         title: '授权人',
@@ -88,6 +91,7 @@ class Role extends Component {
     const {role, checkedKeys} = this.state
     const newRole = {...role}
     newRole.menus = checkedKeys
+    newRole.auth_name = JSON.parse(localStorage.getItem('user_info')).username
     const res = await reqUpdateRole(newRole)
     if(res.status === 0) {
       message.success('更新权限成功')
